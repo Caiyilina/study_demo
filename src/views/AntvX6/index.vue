@@ -1,71 +1,18 @@
 <template>
   <div style="width: 100%; height: 800px">
-    <div id="container"></div>
+    <!-- <div id="container"></div> -->
+    <demo1></demo1>
   </div>
 </template>
 <script>
 import { Graph } from "@antv/x6";
 import { Snapline } from "@antv/x6-plugin-snapline";
-const data = {
-  nodes: [
-    {
-      id: "node1",
-      shape: "rect",
-      x: 40,
-      y: 40,
-      width: 100,
-      height: 40,
-      label: "hello",
-      attrs: {
-        // body 是选择器名称，选中的是 rect 元素
-        body: {
-          stroke: "#8f8f8f",
-          strokeWidth: 1,
-          fill: "#fff",
-          rx: 6,
-          ry: 6,
-        },
-      },
-    },
-    {
-      id: "node2",
-      shape: "rect",
-      x: 160,
-      y: 180,
-      width: 100,
-      height: 40,
-      label: "world",
-      attrs: {
-        body: {
-          stroke: "#8f8f8f",
-          strokeWidth: 1,
-          fill: "#fff",
-          rx: 6,
-          ry: 6,
-        },
-      },
-    },
-  ],
-  edges: [
-    {
-      shape: "edge",
-      source: "node1",
-      target: "node2",
-
-      label: "x6",
-      attrs: {
-        // line 是选择器名称，选中的边的 path 元素
-        line: {
-          stroke: "#8f8f8f",
-          strokeWidth: 1,
-        },
-      },
-    },
-  ],
-};
-
+import { data1 } from "@/data/mock";
+import demo1 from "./demo1.vue";
 export default {
+  components: { demo1 },
   name: "AntvX6",
+
   data() {
     return {
       graph: null,
@@ -105,7 +52,7 @@ export default {
         ],
       },
     });
-    this.graph.fromJSON(data);
+    this.graph.fromJSON(data1);
 
     this.graph.centerContent();
     this.graph.use(new Snapline({ enabled: true }));

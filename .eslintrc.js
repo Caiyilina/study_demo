@@ -14,5 +14,6 @@ module.exports = {
     quotes: ["error", "double"],
     semi: ["error", "always"],
     indent: ["error", 2],
+    "vue/multi-word-component-names": "off", // 关闭此规则
   },
 };

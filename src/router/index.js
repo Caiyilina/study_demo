@@ -1,14 +1,14 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import HomeView from "../views/HomeView.vue";
 
 Vue.use(VueRouter);
 
 const routes = [
   {
     path: "/",
-    name: "home",
-    component: HomeView,
+    redirect: {
+      name: "antvX6",
+    },
   },
   {
     path: "/about",
@@ -23,7 +23,7 @@ const routes = [
     path: "/antvX6",
     name: "antvX6",
     component: () =>
-      import(/* webpackChunkName: "AntvX6" */ "@/views/AntvX6.vue"),
+      import(/* webpackChunkName: "AntvX6" */ "@/views/AntvX6/index.vue"),
   },
 ];
 

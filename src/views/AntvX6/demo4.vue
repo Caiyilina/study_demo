@@ -34,7 +34,7 @@ export default {
           factor: 0.9,
         },
         interacting: {
-          nodeMovable: false,
+          nodeMovable: true,
         },
       });
 
@@ -133,10 +133,11 @@ export default {
             tagName: "text",
             selector: "timeLabel",
             attrs: {
-              x: 190,
-              y: 30,
-              fontSize: 12,
+              x: 75, // 居中显示
+              y: 80, // 调整到节点底部
+              fontSize: 10,
               fill: "#666",
+              textAnchor: "middle", // 文字居中
             },
           },
         ],
@@ -221,7 +222,7 @@ export default {
       if (isLeaf) {
         node.attr(
           "timeLabel/text",
-          `计划: ${data.planTime} 实际: ${data.actualTime}`
+          `计划: ${data.planTime}\n 实际: ${data.actualTime}`
         );
       }
 

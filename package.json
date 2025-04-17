@@ -11,6 +11,8 @@
   "dependencies": {
     "@antv/x6": "^2.18.1",
     "@antv/x6-plugin-snapline": "^2.1.7",
+    "@antv/x6-plugin-transform": "^2.1.8",
+    "@antv/x6-vue-shape": "^2.1.2",
     "ant-design-vue": "^4.2.6",
     "core-js": "^3.8.3",
     "vue": "^2.6.14",

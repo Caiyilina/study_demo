@@ -4,7 +4,6 @@
 <script>
 import { Graph } from "@antv/x6";
 // 注册节点
-// TODO https://x6.antv.antgroup.com/tutorial/basic/edge
 Graph.registerNode(
   "custom-node",
   {
@@ -87,6 +86,7 @@ export default {
         x: 40,
         y: 40,
         label: "hello",
+        id: "node1",
       });
 
       const target = graph.addNode({
@@ -94,20 +94,62 @@ export default {
         x: 300,
         y: 220,
         label: "world",
+        id: "node2",
       });
+
       graph.addEdge({
         source,
         target,
+        labels: [
+          {
+            attrs: {
+              label: {
+                text: "40%",
+                stroke: "#aaa",
+              },
+            },
+            position: 0.4,
+          },
+          {
+            attrs: {
+              label: {
+                text: "60%",
+                stroke: "#aaa",
+              },
+            },
+            position: 0.6,
+          },
+        ],
+
         attrs: {
           line: {
-            stroke: "#8f8f8f",
-            strokeWidth: 1,
+            sourceMarker: {
+              tagName: "path",
+              d: "M 20 -10 0 0 20 10 Z",
+            },
+            targetMarker: {
+              tagName: "path",
+              fill: "yellow", // 使用自定义填充色
+              stroke: "green", // 使用自定义边框色
+              strokeWidth: 2,
+              d: "M 20 -10 0 0 20 10 Z",
+            },
           },
         },
+
         vertices: [
           { x: 100, y: 200 },
           { x: 300, y: 120 },
         ],
+        // 如果没有 args 参数，可以简写为 router: 'orth'
+        router: {
+          name: "orth",
+          args: {},
+        },
+        connector: {
+          name: "jumpover",
+          args: {},
+        },
       });
 
       graph.centerContent();

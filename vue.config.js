@@ -9,9 +9,17 @@ module.exports = {
       },
     },
   },
+  css: {
+    loaderOptions: {
+      sass: {
+        implementation: require("sass"),
+      },
+    },
+  },
 };
 
 const { defineConfig } = require("@vue/cli-service");
+const loader = require("sass-loader");
 module.exports = defineConfig({
   transpileDependencies: true,
 });

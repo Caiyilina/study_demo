@@ -3,49 +3,6 @@
 </template>
 <script>
 import { Graph } from "@antv/x6";
-// 自定义连接桩
-Graph.registerNode(
-  "custom-node-width-port",
-  {
-    inherit: "rect",
-    width: 100,
-    height: 40,
-    attrs: {
-      body: {
-        stroke: "#8f8f8f",
-        strokeWidth: 1,
-        fill: "#fff",
-        rx: 6,
-        ry: 6,
-      },
-    },
-    ports: {
-      groups: {
-        top: {
-          position: "top",
-          attrs: {
-            circle: {
-              magnet: true,
-              stroke: "#8f8f8f",
-              r: 5,
-            },
-          },
-        },
-        bottom: {
-          position: "bottom",
-          attrs: {
-            circle: {
-              magnet: true,
-              stroke: "#8f8f8f",
-              r: 5,
-            },
-          },
-        },
-      },
-    },
-  },
-  true
-);
 
 export default {
   name: "Demo",
@@ -133,8 +90,62 @@ export default {
       });
       graph.centerContent();
     },
+    registerInit() {
+      Graph.unregisterNode("custom-node-width-port");
+      // 自定义连接桩
+      Graph.registerNode(
+        "custom-node-width-port",
+        {
+          inherit: "rect",
+          width: 100,
+          height: 40,
+          attrs: {
+            body: {
+              stroke: "#8f8f8f",
+              strokeWidth: 1,
+              fill: "#fff",
+              rx: 6,
+              ry: 6,
+            },
+          },
+          ports: {
+            groups: {
+              top: {
+                position: "top",
+                attrs: {
+                  circle: {
+                    magnet: true,
+                    stroke: "#8f8f8f",
+                    r: 5,
+                  },
+                },
+              },
+              bottom: {
+                position: "bottom",
+                attrs: {
+                  circle: {
+                    magnet: true,
+                    stroke: "#8f8f8f",
+                    r: 5,
+                  },
+                },
+              },
+            },
+          },
+        },
+        true
+      );
+    },
   },
   mounted() {
+    console.log("demo2-mounted");
+
+    this.registerInit();
+    this.init();
+  },
+  activated() {
+    console.log("demo2-activated");
+    this.registerInit();
     this.init();
   },
 };

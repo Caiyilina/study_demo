@@ -1,5 +1,5 @@
 <template>
-  <div ref="container" style="width: 100%; height: 100%"></div>
+  <div ref="container" style="width: 100%; height: 100vh"></div>
 </template>
 
 <script>
@@ -10,10 +10,10 @@ import { projectProgressTree } from "@/data/mock";
 
 export default {
   name: "Demo4",
+
   data() {
     return {
       graph: null,
-      isRegistered: false, // 添加注册状态标记
     };
   },
   methods: {
@@ -21,7 +21,7 @@ export default {
       this.graph = new Graph({
         container: this.$refs.container,
         width: "100%",
-        height: "100%",
+        height: "800px",
         grid: true,
         scroller: true,
         autoResize: true,
@@ -39,132 +39,15 @@ export default {
       });
 
       // 启用变换插件
-      this.graph.use(
-        new Transform({
-          resizing: true,
-          rotating: false,
-        })
-      );
-      // 只在第一次初始化时注册节点类型
-      if (!this.isRegistered) {
-        this.registerNodeTypes();
-        this.isRegistered = true;
-      }
+      // this.graph.use(
+      //   new Transform({
+      //     resizing: true,
+      //     rotating: false,
+      //   })
+      // );
 
       // 渲染组织架构图
       this.renderOrgChart();
-    },
-    // 注册自定义形状
-    registerNodeTypes() {
-      // 注册自定义节点
-      Graph.registerNode("org-node", {
-        inherit: "rect",
-        width: 180,
-        height: 60,
-        attrs: {
-          body: {
-            stroke: "#5B8FF9",
-            strokeWidth: 1,
-            fill: "#E6F7FF",
-            rx: 4,
-            ry: 4,
-          },
-          text: {
-            fontSize: 16,
-            fill: "#1890FF",
-            fontWeight: "bold",
-          },
-          foldButton: {
-            x: 180,
-            y: 30,
-            cursor: "pointer",
-          },
-        },
-        markup: [
-          {
-            tagName: "rect",
-            selector: "body",
-          },
-          {
-            tagName: "text",
-            selector: "text",
-          },
-          // {
-          //   tagName: "g",
-          //   selector: "foldButton",
-          //   children: [
-          //     {
-          //       tagName: "circle",
-          //       attrs: {
-          //         r: 8,
-          //         fill: "#ffffff",
-          //         stroke: "#5B8FF9",
-          //         strokeWidth: 1,
-          //       },
-          //     },
-          //     {
-          //       tagName: "path",
-          //       attrs: {
-          //         d: "M -4 0 L 4 0 M 0 -4 L 0 4",
-          //         stroke: "#5B8FF9",
-          //         strokeWidth: 1.5,
-          //       },
-          //     },
-          //   ],
-          // },
-        ],
-      });
-
-      // 注册叶子节点（无子节点的特殊节点）
-      Graph.registerNode("org-leaf-node", {
-        inherit: "org-node", // 添加相同的ports配置
-        width: 150,
-        height: 60,
-        markup: [
-          {
-            tagName: "rect",
-            selector: "body",
-          },
-          {
-            tagName: "text",
-            selector: "text",
-          },
-          {
-            tagName: "text",
-            selector: "timeLabel",
-            attrs: {
-              x: 75, // 居中显示
-              y: 80, // 调整到节点底部
-              fontSize: 10,
-              fill: "#666",
-              textAnchor: "middle", // 文字居中
-            },
-          },
-        ],
-      });
-
-      // 注册边
-      Graph.registerEdge("org-edge", {
-        inherit: "edge",
-        attrs: {
-          line: {
-            stroke: "#A3B1BF",
-            strokeWidth: 1,
-          },
-        },
-        router: {
-          name: "manhattan",
-          args: {
-            padding: 10,
-          },
-        },
-        connector: {
-          name: "rounded",
-          args: {
-            radius: 8,
-          },
-        },
-      });
     },
 
     renderOrgChart() {
@@ -220,10 +103,8 @@ export default {
 
       // 如果是叶子节点，添加时间标注
       if (isLeaf) {
-        node.attr(
-          "timeLabel/text",
-          `计划: ${data.planTime}\n 实际: ${data.actualTime}`
-        );
+        node.attr("timeLabel/text", `计划: ${data.planTime}`);
+        node.attr("sjLabel/text", `实际: ${data.actualTime}`);
       }
 
       // 添加折叠/展开按钮点击事件
@@ -252,6 +133,8 @@ export default {
 
     toggleChildren(node) {
       const data = node.getData();
+      console.log("点击了折叠按钮", data);
+
       const children = this.graph.getSuccessors(node, { distance: 1 });
 
       if (data.collapsed) {

@@ -3,47 +3,6 @@
 </template>
 <script>
 import { Graph } from "@antv/x6";
-// 注册节点
-Graph.registerNode(
-  "custom-node",
-  {
-    inherit: "rect", // 继承于 rect 节点
-    width: 100,
-    height: 40,
-    markup: [
-      {
-        tagName: "rect", // 标签名称
-        selector: "body", // 选择器
-      },
-      {
-        tagName: "image",
-        selector: "img",
-      },
-      {
-        tagName: "text",
-        selector: "label",
-      },
-    ],
-    attrs: {
-      body: {
-        stroke: "#8f8f8f",
-        strokeWidth: 1,
-        fill: "#fff",
-        rx: 6,
-        ry: 6,
-      },
-      img: {
-        "xlink:href":
-          "https://gw.alipayobjects.com/zos/antfincdn/FLrTNDvlna/antv.png",
-        width: 16,
-        height: 16,
-        x: 12,
-        y: 12,
-      },
-    },
-  },
-  true
-);
 export default {
   name: "Demo",
   methods: {
@@ -154,8 +113,65 @@ export default {
 
       graph.centerContent();
     },
+    // 注册节点
+    registerNode() {
+      // 检查节点是否已存在
+
+      Graph.unregisterNode("custom-node");
+
+      // 注册节点
+      Graph.registerNode(
+        "custom-node",
+        {
+          inherit: "rect", // 继承于 rect 节点
+          width: 100,
+          height: 40,
+          markup: [
+            {
+              tagName: "rect", // 标签名称
+              selector: "body", // 选择器
+            },
+            {
+              tagName: "image",
+              selector: "img",
+            },
+            {
+              tagName: "text",
+              selector: "label",
+            },
+          ],
+          attrs: {
+            body: {
+              stroke: "#8f8f8f",
+              strokeWidth: 1,
+              fill: "#fff",
+              rx: 6,
+              ry: 6,
+            },
+            img: {
+              "xlink:href":
+                "https://gw.alipayobjects.com/zos/antfincdn/FLrTNDvlna/antv.png",
+              width: 16,
+              height: 16,
+              x: 12,
+              y: 12,
+            },
+          },
+        },
+        true
+      );
+    },
   },
+
   mounted() {
+    console.log("demo1-mounted");
+
+    this.registerNode();
+    this.init();
+  },
+  activated() {
+    console.log("demo1-activated");
+    this.registerInit();
     this.init();
   },
 };

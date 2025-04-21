@@ -151,6 +151,15 @@ export default {
         width: container.offsetWidth,
         height: container.offsetHeight,
         autoResize: true,
+        panning: true,
+        mousewheel: {
+          enabled: true,
+          modifiers: ["ctrl", "meta"],
+          minScale: 0.1,
+          maxScale: 10,
+          factor: 0.9,
+        },
+
         background: {
           color: "#F2F7FA",
         },
@@ -231,6 +240,11 @@ export default {
           // 创建边
           this.treeGraph.addEdge({
             shape: "org-edge",
+            router: {
+              name: "orth",
+              args: { padding: 10 },
+            },
+            connector: "smooth",
             source: node,
             target: childNode,
           });
@@ -240,9 +254,69 @@ export default {
       return node;
     },
 
-    // 布局
     // 布局方法
-    layout(root) {},
+    layout(root) {
+      const options = {
+        nodeWidth: 180,
+        nodeHeight: 60,
+        hgap: 40, // 增加水平间距
+        vgap: 40, // 增加垂直间距
+        direction: "horizontal",
+        levelGap: 120, // 新增：层级之间的额外间距
+      };
+
+      // 计算子树高度（用于垂直居中）
+      const getSubtreeHeight = (node) => {
+        const children = this.graph.getSuccessors(node, { distance: 1 });
+        if (children.length === 0) {
+          return options.nodeHeight;
+        }
+        return (
+          children.reduce((sum, child) => sum + getSubtreeHeight(child), 0) +
+          (children.length - 1) * options.vgap
+        );
+      };
+      // 计算子树数量（用于平分空间）
+      const countSubtreeNodes = (node) => {
+        const children = this.graph.getSuccessors(node, { distance: 1 });
+        if (children.length === 0) return 1;
+        return children.reduce(
+          (sum, child) => sum + countSubtreeNodes(child),
+          0
+        );
+      };
+      // 递归布局
+      const walk = (node, x, y, parentHeight = 0, level = 0) => {
+        node.position(x, y);
+        const children = this.graph.getSuccessors(node, { distance: 1 });
+
+        if (children.length > 0) {
+          const childX = x + options.nodeWidth + options.hgap;
+
+          // 计算当前节点下所有子节点的总高度
+          const totalHeight = getSubtreeHeight(node);
+
+          // 计算起始Y坐标，使子节点组垂直居中
+          let childY = y - totalHeight / 2 + options.nodeHeight / 2;
+
+          // 如果是二级及以上节点，使用父节点高度计算位置
+          if (level > 0) {
+            childY = y - parentHeight / 2 + options.nodeHeight / 2;
+            // 添加层级间距
+            // childY += level * options.levelGap;
+          }
+
+          children.forEach((child) => {
+            const subtreeHeight = getSubtreeHeight(child);
+            walk(child, childX, childY, subtreeHeight, level + 1);
+            childY += subtreeHeight + options.vgap;
+          });
+        }
+      };
+
+      walk(root, 0, 0);
+      this.treeGraph.centerContent();
+    },
   },
 };
 </script>

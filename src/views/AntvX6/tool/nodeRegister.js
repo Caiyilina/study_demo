@@ -4,6 +4,7 @@ export default function nodeRegister() {
   // 注册自定义节点
   Graph.registerNode("org-node", {
     inherit: "rect",
+    zIndex: 9,
     width: 180,
     height: 60,
     attrs: {
@@ -19,16 +20,37 @@ export default function nodeRegister() {
         fill: "#1890FF",
         fontWeight: "bold",
       },
-      foldButton: {
-        x: 180,
-        y: 30,
+      // 按钮组的属性
+      buttonGroup: {
+        refX: "100%",
+        refY: "50%",
+      },
+      button: {
+        fill: "#5F95FF",
+        stroke: "none",
+        x: -10,
+        y: -10,
+        height: 20,
+        width: 30,
+        rx: 10,
+        ry: 10,
         cursor: "pointer",
+        event: "node:collapse",
+      },
+      buttonSign: {
+        refX: 5,
+        refY: -5,
+        stroke: "#FFFFFF",
+        strokeWidth: 1.6,
       },
     },
     markup: [
       {
         tagName: "rect",
         selector: "body",
+        attrs: {
+          zIndex: 9, // 节点主体层级最高
+        },
       },
       {
         tagName: "text",
@@ -36,23 +58,24 @@ export default function nodeRegister() {
       },
       {
         tagName: "g",
-        selector: "foldButton",
+        selector: "buttonGroup",
+        attrs: {
+          zIndex: 6, // 按钮组层级次之（保持原值）
+        },
         children: [
           {
-            tagName: "circle",
+            tagName: "rect",
+            selector: "button",
             attrs: {
-              r: 8,
-              fill: "#ffffff",
-              stroke: "#5B8FF9",
-              strokeWidth: 1,
+              "pointer-events": "visiblePainted",
             },
           },
           {
             tagName: "path",
+            selector: "buttonSign",
             attrs: {
-              d: "M -4 0 L 4 0 M 0 -4 L 0 4",
-              stroke: "#5B8FF9",
-              strokeWidth: 1.5,
+              fill: "none",
+              "pointer-events": "none",
             },
           },
         ],
@@ -65,6 +88,7 @@ export default function nodeRegister() {
     inherit: "org-node", // 添加相同的ports配置
     width: 150,
     height: 60,
+    zIndex: 8,
     markup: [
       {
         tagName: "rect",
@@ -102,10 +126,12 @@ export default function nodeRegister() {
   // 注册边
   Graph.registerEdge("org-edge", {
     inherit: "edge",
+    zIndex: 8,
     attrs: {
       line: {
         stroke: "#A3B1BF",
         strokeWidth: 1,
+        zIndex: 0, // 边层级最低
       },
     },
     router: {

@@ -86,12 +86,17 @@ export default {
 
     createNode(data) {
       const isLeaf = !data.children || data.children.length === 0;
+
+      // 新增文本测量方法
+      const textWidth = this.calculateTextWidth(data.name);
+      const nodeWidth = Math.max(textWidth + 40, 120); // 设置最小宽度120px
+
       const node = this.graph.addNode({
         id: data.id,
         shape: isLeaf ? "org-leaf-node" : "org-node",
         x: 0,
         y: 0,
-        width: isLeaf ? 200 : 160,
+        width: nodeWidth, // 使用动态计算宽度
         height: isLeaf ? 60 : 40,
         data: data,
         attrs: {
@@ -101,10 +106,23 @@ export default {
         },
       });
 
+      // 添加点击事件调整层级
+      node.on("click", () => {
+        node.bringToFront();
+        this.graph.getEdges().forEach((edge) => {
+          if (edge.getTargetCell() === node) {
+            edge.bringToFront();
+          }
+        });
+      });
+
       // 如果是叶子节点，添加时间标注
       if (isLeaf) {
         node.attr("timeLabel/text", `计划: ${data.planTime}`);
         node.attr("sjLabel/text", `实际: ${data.actualTime}`);
+      } else {
+        // 设置ann
+        node.attr("buttonSign", { d: "M 1 5 9 5 M 5 1 5 9", strokeWidth: 1.6 });
       }
 
       // 添加折叠/展开按钮点击事件
@@ -156,9 +174,91 @@ export default {
       const options = {
         nodeWidth: 180,
         nodeHeight: 60,
+        hgap: 40,
+        vgap: 40,
+        direction: "horizontal",
+        levelGap: 120,
+      };
+
+      // 新增：计算子树尺寸（宽度和高度）
+      const getSubtreeSize = (node) => {
+        const children = this.graph.getSuccessors(node, { distance: 1 });
+        if (children.length === 0) {
+          return { width: options.nodeWidth, height: options.nodeHeight };
+        }
+
+        // 根据布局方向计算尺寸
+        if (options.direction === "horizontal") {
+          const totalHeight =
+            children.reduce(
+              (sum, child) => sum + getSubtreeSize(child).height,
+              0
+            ) +
+            (children.length - 1) * options.vgap;
+          return {
+            width:
+              options.nodeWidth + options.hgap + children[0].getSize().width,
+            height: totalHeight,
+          };
+        } else {
+          const totalWidth =
+            children.reduce(
+              (sum, child) => sum + getSubtreeSize(child).width,
+              0
+            ) +
+            (children.length - 1) * options.hgap;
+          return {
+            width: totalWidth,
+            height:
+              options.nodeHeight + options.vgap + children[0].getSize().height,
+          };
+        }
+      };
+
+      // 递归布局（自底向上）
+      const walk = (node, x, y) => {
+        const children = this.graph.getSuccessors(node, { distance: 1 });
+
+        // 先布局子节点
+        children.forEach((child) => {
+          const childSize = getSubtreeSize(child);
+          walk(child, x + options.nodeWidth + options.hgap, y);
+          y += childSize.height + options.vgap;
+        });
+
+        // 计算父节点居中位置
+        if (children.length > 0) {
+          const firstChild = children[0];
+          const lastChild = children[children.length - 1];
+          const childrenHeight =
+            lastChild.getPosition().y -
+            firstChild.getPosition().y +
+            lastChild.getSize().height;
+
+          node.position(
+            x,
+            firstChild.getPosition().y +
+              childrenHeight / 2 -
+              node.getSize().height / 2
+          );
+        } else {
+          node.position(x, y);
+        }
+      };
+
+      // 从根节点开始布局
+      const rootSize = getSubtreeSize(root);
+      walk(root, 0, (this.graph.getContentBBox().height - rootSize.height) / 2);
+      this.graph.centerContent();
+    },
+    layout2(root) {
+      const options = {
+        nodeWidth: 180,
+        nodeHeight: 60,
         hgap: 40, // 增加水平间距
         vgap: 40, // 增加垂直间距
         direction: "horizontal",
+        // direction: "vertical",
         levelGap: 120, // 新增：层级之间的额外间距
       };
 
@@ -205,14 +305,39 @@ export default {
 
           children.forEach((child) => {
             const subtreeHeight = getSubtreeHeight(child);
-            walk(child, childX, childY, subtreeHeight, level + 1);
-            childY += subtreeHeight + options.vgap;
+            // walk(child, childX, childY, subtreeHeight, level + 1);
+            // childY += subtreeHeight + options.vgap;
+            if (options.direction == "vertical") {
+              walk(child, x, y + options.nodeHeight + options.vgap);
+              x += childSize.width + options.hgap;
+            } else if (options.direction == "horizontal") {
+              walk(child, childX, childY, subtreeHeight, level + 1);
+              childY += subtreeHeight + options.vgap;
+            }
           });
         }
       };
 
       walk(root, 0, 0);
       this.graph.centerContent();
+    },
+    // 新增文本测量方法
+    calculateTextWidth(text) {
+      const svgNS = "http://www.w3.org/2000/svg";
+      const textEl = document.createElementNS(svgNS, "text");
+      textEl.setAttribute("font-family", "Arial");
+      textEl.setAttribute("font-size", "14px");
+      textEl.textContent = text;
+
+      const svg = document.createElementNS(svgNS, "svg");
+      svg.style.position = "absolute";
+      svg.style.visibility = "hidden";
+      svg.appendChild(textEl);
+      document.body.appendChild(svg);
+
+      const width = textEl.getBBox().width;
+      document.body.removeChild(svg);
+      return width;
     },
   },
 

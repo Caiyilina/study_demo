@@ -215,6 +215,7 @@ export default {
       this.graph.centerContent();
     },
   },
+
   mounted() {
     this.$nextTick(() => {
       this.initGraph();

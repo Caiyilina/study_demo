@@ -16,5 +16,7 @@ module.exports = {
     indent: ["error", 2],
     "vue/multi-word-component-names": "off", // 关闭此规则
     "vue/no-unused-components": "off",
+    "vue/valid-v-bind": "off", // 新增这行
+    "vue/valid-v-style": "off", // 新增这行
   },
 };

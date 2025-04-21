@@ -2,9 +2,10 @@
   <div id="app">
     <nav>
       <router-link to="/about">About</router-link> |
-      <router-link to="/antvX6">AntV6</router-link>
+      <router-link to="/antvX6">AntV6</router-link> |
+      <router-link to="/OrgTree">OrgTree</router-link>
     </nav>
-    <router-view />
+    <div class="view"><router-view /></div>
   </div>
 </template>
 
@@ -29,5 +30,9 @@ nav a {
 
 nav a.router-link-exact-active {
   color: #42b983;
+}
+.view {
+  width: 100%;
+  height: calc(100vh - 100px);
 }
 </style>

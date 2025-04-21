@@ -25,6 +25,12 @@ const routes = [
     component: () =>
       import(/* webpackChunkName: "AntvX6" */ "@/views/AntvX6/index.vue"),
   },
+  {
+    path: "/OrgTree",
+    name: "OrgTree",
+    component: () =>
+      import(/* webpackChunkName: "AntvX6" */ "@/views/orgTree/index.vue"),
+  },
 ];
 
 const router = new VueRouter({

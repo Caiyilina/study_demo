@@ -195,11 +195,11 @@ export default {
         }
 
         this.layout(root);
-        this.graph.centerContent();
+        this.treeGraph.centerContent();
 
         // 强制重绘
         this.$nextTick(() => {
-          this.graph.resize();
+          this.treeGraph.resize();
         });
       } catch (error) {
         console.error("渲染组织架构图失败:", error);
@@ -239,6 +239,10 @@ export default {
 
       return node;
     },
+
+    // 布局
+    // 布局方法
+    layout(root) {},
   },
 };
 </script>

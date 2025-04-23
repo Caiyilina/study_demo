@@ -48,6 +48,9 @@ export default {
 
       // 渲染组织架构图
       this.renderOrgChart();
+
+      // 监听事件
+      this.listenEvents();
     },
 
     renderOrgChart() {
@@ -126,13 +129,13 @@ export default {
       }
 
       // 添加折叠/展开按钮点击事件
-      if (!isLeaf) {
-        node.on("click", ({ e }) => {
-          if (e.target.tagName === "circle" || e.target.tagName === "path") {
-            this.toggleChildren(node);
-          }
-        });
-      }
+      // if (!isLeaf) {
+      //   node.on("click", ({ e }) => {
+      //     if (e.target.tagName === "circle" || e.target.tagName === "path") {
+      //       this.toggleChildren(node);
+      //     }
+      //   });
+      // }
 
       // 递归创建子节点
       if (data.children && data.children.length > 0) {
@@ -151,23 +154,55 @@ export default {
 
     toggleChildren(node) {
       const data = node.getData();
+
       console.log("点击了折叠按钮", data);
 
       const children = this.graph.getSuccessors(node, { distance: 1 });
 
+      if (children.length === 0) {
+        return;
+      }
+
+      //  递归children的children
+      children.forEach((child) => {
+        this.toggleChildren(child);
+      });
+      // 切换按钮样式方法
+      const toggleButton = (node) => {
+        const data = node.getData();
+        const buttonSign = node.attr("buttonSign");
+        if (data.collapsed) {
+          node.attr("buttonSign", {
+            ...buttonSign,
+            d: "M 1 5 9 5 M 5 1 5 9",
+            strokeWidth: 1.6,
+          });
+        } else {
+          node.attr("buttonSign", {
+            ...buttonSign,
+            d: "M 2 5 8 5",
+            strokeWidth: 1.8,
+          });
+        }
+      };
+
       if (data.collapsed) {
-        // 展开子节点
-        children.forEach((child) => {
-          child.show();
-        });
+        children.forEach((child) => child.show());
         data.collapsed = false;
       } else {
-        // 折叠子节点
-        children.forEach((child) => {
-          child.hide();
-        });
+        const hideDescendants = (node) => {
+          const children = this.graph.getSuccessors(node, { distance: 1 });
+          // 递归隐藏子节点和子节点的子节点
+          children.forEach((child) => {
+            child.hide();
+            hideDescendants(child);
+          });
+        };
+        hideDescendants(node);
         data.collapsed = true;
       }
+      // 调用方法切换按钮样式
+      toggleButton(node);
     },
 
     layout(root) {
@@ -338,6 +373,17 @@ export default {
       const width = textEl.getBBox().width;
       document.body.removeChild(svg);
       return width;
+    },
+
+    // 监听事件
+    listenEvents() {
+      this.graph.on("node:click", ({ node }) => {
+        console.log("点击了节点", node);
+      });
+      this.graph.on("node:collapse", ({ node }) => {
+        this.toggleChildren(node);
+        return;
+      });
     },
   },
 

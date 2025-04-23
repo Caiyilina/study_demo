@@ -14,6 +14,7 @@ export default function nodeRegister() {
         fill: "#E6F7FF",
         rx: 4,
         ry: 4,
+        zIndex: 10,
       },
       text: {
         fontSize: 16,
@@ -28,14 +29,15 @@ export default function nodeRegister() {
       button: {
         fill: "#5F95FF",
         stroke: "none",
-        x: -10,
+        x: 0,
         y: -10,
         height: 20,
-        width: 30,
+        width: 20,
         rx: 10,
         ry: 10,
         cursor: "pointer",
         event: "node:collapse",
+        zIndex: 1,
       },
       buttonSign: {
         refX: 5,
@@ -49,7 +51,7 @@ export default function nodeRegister() {
         tagName: "rect",
         selector: "body",
         attrs: {
-          zIndex: 9, // 节点主体层级最高
+          zIndex: 10, // 提高节点主体层级
         },
       },
       {
@@ -59,9 +61,7 @@ export default function nodeRegister() {
       {
         tagName: "g",
         selector: "buttonGroup",
-        attrs: {
-          zIndex: 6, // 按钮组层级次之（保持原值）
-        },
+
         children: [
           {
             tagName: "rect",
@@ -126,12 +126,11 @@ export default function nodeRegister() {
   // 注册边
   Graph.registerEdge("org-edge", {
     inherit: "edge",
-    zIndex: 8,
+    zIndex: 8, // 边层级
     attrs: {
       line: {
         stroke: "#A3B1BF",
         strokeWidth: 1,
-        zIndex: 0, // 边层级最低
       },
     },
     router: {

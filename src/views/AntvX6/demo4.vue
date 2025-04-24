@@ -1,5 +1,5 @@
 <template>
-  <div ref="container" style="width: 100%; height: 100vh"></div>
+  <div ref="container" style="width: 100%; height: calc(100vh - 20px)"></div>
 </template>
 
 <script>
@@ -111,12 +111,7 @@ export default {
 
       // 添加点击事件调整层级
       node.on("click", () => {
-        node.bringToFront();
-        this.graph.getEdges().forEach((edge) => {
-          if (edge.getTargetCell() === node) {
-            edge.bringToFront();
-          }
-        });
+        console.log("点击了节点", data);
       });
 
       // 如果是叶子节点，添加时间标注
@@ -384,6 +379,10 @@ export default {
         this.toggleChildren(node);
         return;
       });
+      this.graph.on("node:dblclick", ({ node }) => {
+        console.log("双击了节点", node);
+        node.setData({ editable: true });
+      });
     },
   },
 
@@ -391,6 +390,24 @@ export default {
     this.$nextTick(() => {
       this.initGraph();
     });
+  },
+
+  updated() {
+    // 自动聚焦输入框
+    const editableNode = this.graph
+      .getNodes()
+      .find((n) => n.getData()?.editable);
+    if (editableNode) {
+      this.$nextTick(() => {
+        const input = document.querySelector(
+          `[data-cell-id="${editableNode.id}"] input`
+        );
+        input?.focus();
+        input?.addEventListener("blur", (e) =>
+          this.handleInputBlur(e, editableNode)
+        );
+      });
+    }
   },
 };
 </script>

@@ -10,7 +10,7 @@
         {{ comp.displayName }}
       </button>
     </div>
-    <div style="width: 100%; height: cal(100vh - 100px)">
+    <div style="width: 100%; height: cal(100vh - 200px)">
       <component :is="currentComponent"></component>
     </div>
   </div>

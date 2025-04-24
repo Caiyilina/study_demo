@@ -51,17 +51,49 @@ export default function nodeRegister() {
         tagName: "rect",
         selector: "body",
         attrs: {
-          zIndex: 10, // 提高节点主体层级
+          zIndex: 10,
         },
       },
       {
         tagName: "text",
         selector: "text",
+        attrs: {
+          display: { condition: "!editable" },
+        },
+      },
+      {
+        tagName: "foreignObject",
+        selector: "inputContainer",
+        attrs: {
+          width: 160,
+          height: 30,
+          x: 10,
+          y: 15,
+          display: { condition: "editable" },
+          style: {
+            overflow: "hidden",
+            "text-overflow": "ellipsis",
+            "white-space": "nowrap",
+            "font-size": "16px",
+            "font-family": "Arial, sans-serif",
+          },
+        },
+        children: [
+          {
+            tagName: "input",
+            selector: "input",
+            ns: "http://www.w3.org/1999/xhtml",
+            attrs: {
+              type: "text",
+              style:
+                "width:100%;height:100%;border:none;outline:none;padding:0 5px;font-size:16px;",
+            },
+          },
+        ],
       },
       {
         tagName: "g",
         selector: "buttonGroup",
-
         children: [
           {
             tagName: "rect",
@@ -97,6 +129,9 @@ export default function nodeRegister() {
       {
         tagName: "text",
         selector: "text",
+        attrs: {
+          display: { condition: "!editable" },
+        },
       },
       {
         tagName: "text",
